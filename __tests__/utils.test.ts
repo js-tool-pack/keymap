@@ -20,6 +20,7 @@ describe('utils', function () {
     expect(isMac()).toBeTruthy();
   });
   test('handleKeys', () => {
+    isMac.userAgent = 'mac';
     expect(handleKeys('Control+a')).toEqual(['control+a', ['control', 'a']]);
     expect(handleKeys('ctrl+a')).toEqual(['ctrl+a', ['control', 'a']]);
     expect(handleKeys('ControlOrMeta+a')).toEqual(['controlormeta+a', ['meta', 'a']]);
