@@ -2,14 +2,16 @@ import { Keymap, StrategyType } from '../src';
 import { isMac } from '../src/utils';
 
 function useEvent(el: Window | HTMLElement, type: keyof HTMLElementEventMap) {
-  const e = document.createEvent('Events') as KeyboardEvent;
-  e.initEvent(type, true, true);
+  // const e = document.createEvent('Events');
+  // e.initEvent(type, true, true);
+  // 使用new Event代替document.createEvent
+  const initEvent = () => new Event(type, { bubbles: true, cancelable: true });
   return {
     trigger() {
-      delete (e as any).key;
-      el.dispatchEvent(e);
+      el.dispatchEvent(initEvent());
     },
     setKey(key: string) {
+      const e = initEvent();
       (e as any).key = key;
       el.dispatchEvent(e);
     },
