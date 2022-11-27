@@ -1,17 +1,22 @@
 /**
- * 未处理的快捷键绑定参数对象
+ * 需要注册的快捷键绑定参数对象
  */
-export interface KeyMap {
+export interface KeyOptions {
   /**
    * 快捷键
    * @example
    * 'MetaOrControl+a'
+   * 'MetaOrCtrl+a'
+   * 'CmdOrCtrl+a'
+   * 'CommandOrCtrl+a'
+   * 'Ctrl+a'
+   * 'Meta+a'
    */
   keys: string;
   /**
    * 快捷键触发时调用的函数
    */
-  handler: (this: HandledKeyMap, e?: KeyboardEvent) => any;
+  handler: (this: HandledKeyOptions, e?: KeyboardEvent) => any;
   /**
    * 描述
    */
@@ -21,7 +26,7 @@ export interface KeyMap {
 /**
  * 处理后的快捷键参数对象
  */
-export type HandledKeyMap = KeyMap & { rawKeys: string; keyList: string[] };
+export type HandledKeyOptions = KeyOptions & { rawKeys: string; keyList: string[] };
 
 /**
  * 按键绑定策略类型
@@ -39,4 +44,7 @@ export type StrategyType = 'recordAll' | 'recordCompose';
 /**
  * 策略声明类型
  */
-export type Strategy = <T extends HTMLElement | Window>(el: T, maps: HandledKeyMap[]) => () => void;
+export type Strategy = <T extends HTMLElement | Window>(
+  el: T,
+  maps: HandledKeyOptions[],
+) => () => void;

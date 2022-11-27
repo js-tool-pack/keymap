@@ -1,4 +1,4 @@
-import type { HandledKeyMap, KeyMap, StrategyType } from './types';
+import type { HandledKeyOptions, KeyOptions, StrategyType } from './types';
 import { keymapStrategy } from './strategy';
 import { handleKeys } from './utils';
 
@@ -9,19 +9,25 @@ export class Keymap {
   /**
    * 已注册的所有组合键
    */
-  private readonly registeredMaps!: HandledKeyMap[];
+  private readonly registeredMaps!: HandledKeyOptions[];
+
   /**
-   * 取消注册
+   * 取消所有注册，并移除事件监听
    */
   private readonly canceler: Function;
 
   /**
+   * @example
+   * ```ts
+   * new Keymap([{ desc:'select all', keys: 'Control+a', handler() {\/* do something *\/} }], window, 'recordCompose');
+   * ```
+   *
    * @param maps 事件绑定
    * @param el 绑定的dom对象，默认为window
    * @param strategy 绑定策略，分为记录全部(recordAll)和只记录组合键(recordCompose)，默认为只记录组合键
    */
   constructor(
-    maps: KeyMap[],
+    maps: KeyOptions[],
     el: HTMLElement | Window = window,
     strategy: StrategyType = 'recordCompose',
   ) {
@@ -33,8 +39,8 @@ export class Keymap {
   /**
    * 处理组合键数组
    */
-  private handleMaps(maps: KeyMap[]) {
-    return maps.map<HandledKeyMap>((item) => {
+  private handleMaps(maps: KeyOptions[]) {
+    return maps.map<HandledKeyOptions>((item) => {
       const [keys, keyList] = handleKeys(item.keys);
       return { ...item, rawKeys: item.keys, keys, keyList };
     });
@@ -81,29 +87,73 @@ export class Keymap {
    * 可用于显示所有的快捷键
    * @returns 所有已注册快捷键
    */
-  get maps(): Omit<HandledKeyMap, 'handler'>[] {
+  get maps(): Omit<HandledKeyOptions, 'handler'>[] {
     return JSON.parse(JSON.stringify(this.registeredMaps));
   }
 
   /**
    * 判断快捷键是否已经被绑定
+   *
+   * @example
+   * ```ts
+   *  const km = new Keymap([{ keys: 'Control+a', handler: () => {} }]);
+   *  console.log(km.has('Control+a')); // true
+   *  console.log(km.has('control+a')); // true
+   *  console.log(km.has('ctrl+a')); // true
+   *  console.log(km.has('ctrl+b')); // false
+   * ```
    */
   has(keys: string): boolean {
     return this.findIndex(keys) > -1;
   }
 
   /**
-   * 添加组合键
+   * 添加快捷键
+   *
+   * @example
+   * ```ts
+   * let count = 0;
+   * const km = new Keymap([{ keys: 'Control+a', handler: () => {} }]);
+   *
+   * km.add({ keys: 'ctrl+b', handler: () => count++ });
+   * console.log(km.has('ctrl+b')); // true
+   *
+   * km.trigger('Control+b');
+   * console.log(count) // 1;
+   * ```
+   *
    * @returns 是否添加成功
    */
-  add(map: KeyMap): boolean {
+  add(map: KeyOptions): boolean {
     const exist = this.has(map.keys);
     !exist && this.registeredMaps.push(...this.handleMaps([map]));
     return !exist;
   }
 
   /**
-   * 移除组合键
+   * 移除快捷键键
+   *
+   * @example
+   *```ts
+   * let count = 0;
+   * const km = new Keymap([
+   *   { keys: 'Control+a', handler: () => {} },
+   *   { keys: 'Control+b', handler: () => count++ },
+   * ]);
+   *
+   * km.trigger('ctrl+a');
+   * km.trigger('ctrl+b');
+   *
+   * console.log(count); // 1
+   *
+   * km.remove('ctrl+b');
+   *
+   * km.trigger('ctrl+a');
+   * km.trigger('ctrl+b');
+   *
+   * console.log(count); // 1
+   *
+   * ```
    */
   remove(keys: string): void {
     const index = this.findIndex(keys);
@@ -112,7 +162,9 @@ export class Keymap {
   }
 
   /**
-   * 销毁按键绑定，之后再调用add会报错
+   * 销毁
+   *
+   * 之后再调用add会报错
    */
   destroy() {
     this.canceler();

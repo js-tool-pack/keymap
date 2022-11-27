@@ -1,2 +1,2 @@
 export * from './Keymap';
-export * from './types';
+export { KeyOptions, StrategyType } from './types';
