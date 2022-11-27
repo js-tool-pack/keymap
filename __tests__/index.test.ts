@@ -35,4 +35,15 @@ describe('keymap', function () {
     expect(km.has('ctrl+a')).toBeTruthy();
     expect(km.has('ctrl+b')).toBeFalsy();
   });
+  test('add', () => {
+    const fn = jest.fn();
+    const km = new testTarget.Keymap([{ keys: 'Control+a', handler: fn }]);
+
+    km.add({ keys: 'ctrl+b', handler: fn });
+    expect(km.has('ctrl+b')).toBeTruthy();
+
+    expect(fn.mock.calls.length).toBe(0);
+    km.trigger('Control+b');
+    expect(fn.mock.calls.length).toBe(1);
+  });
 });
