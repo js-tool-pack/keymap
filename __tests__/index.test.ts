@@ -27,4 +27,12 @@ describe('keymap', function () {
     km.trigger('Control+a');
     expect(fn.mock.calls.length).toBe(1);
   });
+  test('has', () => {
+    const fn = jest.fn();
+    const km = new testTarget.Keymap([{ keys: 'Control+a', handler: fn }]);
+    expect(km.has('Control+a')).toBeTruthy();
+    expect(km.has('control+a')).toBeTruthy();
+    expect(km.has('ctrl+a')).toBeTruthy();
+    expect(km.has('ctrl+b')).toBeFalsy();
+  });
 });

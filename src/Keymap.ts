@@ -46,7 +46,16 @@ export class Keymap {
     console.table(info);
   }
   has(keys: string): boolean {
-    return this.handledMaps.some((item) => item.rawKeys === keys);
+    const handledKeys = handleKeys(keys);
+    return this.handledMaps.some((map) => {
+      if (map.rawKeys === keys) return true;
+      if (map.keys === handledKeys[0]) return true;
+
+      return (
+        handledKeys[1].length === map.keyList.length &&
+        handledKeys[1].every((key) => map.keyList.includes(key))
+      );
+    });
   }
   add(map: KeyMap): boolean {
     const exist = this.has(map.keys);
