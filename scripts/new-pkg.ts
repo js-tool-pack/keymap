@@ -221,6 +221,16 @@ function updateTypedocJson(config: Awaited<ReturnType<typeof getConfig>>) {
 
 async function setup() {
   try {
+    const { start } = await prompt<{ start: boolean }>({
+      type: 'confirm',
+      name: 'start',
+      message: '是否开始初始化？',
+      initial: false,
+      required: true,
+    });
+
+    if (!start) return;
+
     const config = await getConfig();
 
     const pkgPath = path.resolve(pkgsPath, config.name);
