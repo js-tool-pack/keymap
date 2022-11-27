@@ -20,26 +20,6 @@ export class Keymap {
       return { ...item, rawKeys: item.keys, keys, keyList };
     });
   }
-
-  cancel() {
-    keymapStrategy[this.strategy](this.el, this.handledMaps);
-  }
-  trigger(keys: string) {
-    const [handledKeys, keyList] = handleKeys(keys);
-
-    const find = this.handledMaps.find((map) => {
-      if (map.keys === handledKeys) return true;
-      if (map.keyList.length !== keyList.length) return false;
-      return map.keyList.every((key) => keyList.includes(key));
-    });
-
-    if (!find) return;
-
-    find.handler();
-  }
-  get maps(): Omit<HandledKeyMap, 'handler'>[] {
-    return JSON.parse(JSON.stringify(this.handledMaps));
-  }
   private findIndex(keys: string): number {
     const handledKeys = handleKeys(keys);
     return this.handledMaps.findIndex((map) => {
@@ -51,6 +31,17 @@ export class Keymap {
         handledKeys[1].every((key) => map.keyList.includes(key))
       );
     });
+  }
+
+  cancel() {
+    keymapStrategy[this.strategy](this.el, this.handledMaps);
+  }
+  trigger(keys: string) {
+    const index = this.findIndex(keys);
+    this.handledMaps[index]?.handler();
+  }
+  get maps(): Omit<HandledKeyMap, 'handler'>[] {
+    return JSON.parse(JSON.stringify(this.handledMaps));
   }
   has(keys: string): boolean {
     return this.findIndex(keys) > -1;
