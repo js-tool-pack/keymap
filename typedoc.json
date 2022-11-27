@@ -17,5 +17,6 @@
   },
   "navigationLinks": {
     "GitHub": "https://github.com/mengxinssfd/keymap"
-  }
+  },
+  "entryPoints": ["src/index.ts"]
 }
