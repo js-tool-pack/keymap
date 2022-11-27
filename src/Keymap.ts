@@ -45,9 +45,9 @@ export class Keymap {
     }));
     console.table(info);
   }
-  has(keys: string): boolean {
+  private findIndex(keys: string): number {
     const handledKeys = handleKeys(keys);
-    return this.handledMaps.some((map) => {
+    return this.handledMaps.findIndex((map) => {
       if (map.rawKeys === keys) return true;
       if (map.keys === handledKeys[0]) return true;
 
@@ -57,13 +57,16 @@ export class Keymap {
       );
     });
   }
+  has(keys: string): boolean {
+    return this.findIndex(keys) > -1;
+  }
   add(map: KeyMap): boolean {
     const exist = this.has(map.keys);
     !exist && this.handledMaps.push(...this.handleMaps([map]));
     return !exist;
   }
   remove(keys: string): void {
-    const index = this.handledMaps.findIndex((item) => item.rawKeys === keys);
+    const index = this.findIndex(keys);
     if (index === -1) return;
     this.handledMaps.splice(index, 1);
   }
