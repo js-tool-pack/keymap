@@ -4,8 +4,8 @@
 
 此工具来源于 [mditor-useKeymap](https://github.com/mditor-dev/mditor/blob/af73e66/src/utils/useKeymap.ts) 函数，在此抽取成独立库。
 
-- [api 文档](https://js-tool-pack.github.io/keymap/)
-- [在线例子](https://stackblitz.com/edit/typescript-njbsqn?file=package.json,index.ts)
+- [document](https://js-tool-pack.github.io/keymap/)
+- [demo](https://stackblitz.com/edit/typescript-b6dzrc?file=index.ts)
 
 ## 使用方式
 
