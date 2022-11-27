@@ -8,3 +8,6 @@
 
 /public/*
 /types/*
+coverage
+docs-html
+.github
