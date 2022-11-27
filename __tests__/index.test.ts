@@ -1,9 +1,9 @@
-import * as testTarget from '../src';
+import { Keymap } from '../src';
 
 describe('keymap', function () {
   test('base', () => {
     const fn = jest.fn();
-    const km = new testTarget.Keymap([{ keys: 'Control+a', handler: fn }]);
+    const km = new Keymap([{ keys: 'Control+a', handler: fn }]);
     expect(fn.mock.calls.length).toBe(0);
 
     km.trigger('Control+a');
@@ -13,23 +13,27 @@ describe('keymap', function () {
     km.trigger('Ctrl+a');
     expect(fn.mock.calls.length).toBe(3);
   });
-  test('clear', () => {
+  test('destroy', () => {
     const fn = jest.fn();
-    const km = new testTarget.Keymap([{ keys: 'Control+a', handler: fn }]);
+    const km = new Keymap([{ keys: 'Control+a', handler: fn }]);
     expect(fn.mock.calls.length).toBe(0);
 
     km.trigger('Control+a');
     expect(fn.mock.calls.length).toBe(1);
 
-    km.clear();
+    km.destroy();
 
     km.trigger('Control+a');
     km.trigger('Control+a');
     expect(fn.mock.calls.length).toBe(1);
+
+    expect(() => {
+      km.add({ keys: 'Control+o', handler: fn });
+    }).toThrow();
   });
   test('has', () => {
     const fn = jest.fn();
-    const km = new testTarget.Keymap([{ keys: 'Control+a', handler: fn }]);
+    const km = new Keymap([{ keys: 'Control+a', handler: fn }]);
     expect(km.has('Control+a')).toBeTruthy();
     expect(km.has('control+a')).toBeTruthy();
     expect(km.has('ctrl+a')).toBeTruthy();
@@ -37,7 +41,7 @@ describe('keymap', function () {
   });
   test('add', () => {
     const fn = jest.fn();
-    const km = new testTarget.Keymap([{ keys: 'Control+a', handler: fn }]);
+    const km = new Keymap([{ keys: 'Control+a', handler: fn }]);
 
     km.add({ keys: 'ctrl+b', handler: fn });
     expect(km.has('ctrl+b')).toBeTruthy();
@@ -49,7 +53,7 @@ describe('keymap', function () {
   test('remove', () => {
     const fn = jest.fn();
     const fn2 = jest.fn();
-    const km = new testTarget.Keymap([
+    const km = new Keymap([
       { keys: 'Control+a', handler: fn },
       { keys: 'Control+b', handler: fn2 },
     ]);
@@ -75,7 +79,7 @@ describe('keymap', function () {
   });
   test('maps', () => {
     const fn = jest.fn();
-    const km = new testTarget.Keymap([
+    const km = new Keymap([
       { desc: 'test', keys: 'Control+a', handler: fn },
       { desc: 'test2', keys: 'ControlOrMeta+a', handler: fn },
     ]);
