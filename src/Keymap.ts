@@ -37,13 +37,8 @@ export class Keymap {
 
     find.handler();
   }
-  log(): void {
-    const info = this.handledMaps.map((item) => ({
-      desc: item.desc,
-      keys: item.rawKeys,
-      realKeys: JSON.stringify(item.keyList),
-    }));
-    console.table(info);
+  get maps(): Omit<HandledKeyMap, 'handler'>[] {
+    return JSON.parse(JSON.stringify(this.handledMaps));
   }
   private findIndex(keys: string): number {
     const handledKeys = handleKeys(keys);
