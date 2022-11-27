@@ -16,7 +16,7 @@
     "Classes": 1.5
   },
   "navigationLinks": {
-    "GitHub": "https://github.com/mengxinssfd/keymap"
+    "GitHub": "https://github.com/js-tool-pack/keymap"
   },
   "entryPoints": ["src/index.ts"]
 }
