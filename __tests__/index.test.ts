@@ -13,6 +13,18 @@ describe('keymap', function () {
     km.trigger('Ctrl+a');
     expect(fn.mock.calls.length).toBe(3);
   });
+  test('base recordAll', () => {
+    const fn = jest.fn();
+    const km = new Keymap([{ keys: 'Control+a', handler: fn }], window, 'recordAll');
+    expect(fn.mock.calls.length).toBe(0);
+
+    km.trigger('Control+a');
+    expect(fn.mock.calls.length).toBe(1);
+
+    km.trigger('control+a');
+    km.trigger('Ctrl+a');
+    expect(fn.mock.calls.length).toBe(3);
+  });
   test('destroy', () => {
     const fn = jest.fn();
     const km = new Keymap([{ keys: 'Control+a', handler: fn }]);
@@ -49,6 +61,26 @@ describe('keymap', function () {
     expect(fn.mock.calls.length).toBe(0);
     km.trigger('Control+b');
     expect(fn.mock.calls.length).toBe(1);
+
+    let _this: any;
+    const options = {
+      desc: 'test',
+      keys: 'ctrl+s',
+      handler() {
+        _this = this;
+      },
+    };
+    expect(km.add(options)).toBeTruthy();
+    expect(_this).toBeUndefined();
+    km.trigger('Control+s');
+    expect(_this).toEqual({
+      ...options,
+      keyList: ['control', 's'],
+      keys: 'ctrl+s',
+      rawKeys: 'ctrl+s',
+    });
+
+    expect(km.add(options)).toBeFalsy();
   });
   test('remove', () => {
     const fn = jest.fn();
