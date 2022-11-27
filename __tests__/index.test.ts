@@ -1,4 +1,5 @@
 import { Keymap } from '../src';
+import { isMac } from '../src/utils';
 
 describe('keymap', function () {
   test('base', () => {
@@ -110,6 +111,7 @@ describe('keymap', function () {
     expect(fn2.mock.calls.length).toBe(2);
   });
   test('maps', () => {
+    isMac.userAgent = 'mac';
     const fn = jest.fn();
     const km = new Keymap([
       { desc: 'test', keys: 'Control+a', handler: fn },
@@ -129,5 +131,6 @@ describe('keymap', function () {
         rawKeys: 'ControlOrMeta+a',
       },
     ]);
+    isMac.userAgent = navigator.userAgent;
   });
 });
