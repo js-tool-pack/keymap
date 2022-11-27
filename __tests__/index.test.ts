@@ -73,4 +73,25 @@ describe('keymap', function () {
     expect(fn.mock.calls.length).toBe(2);
     expect(fn2.mock.calls.length).toBe(2);
   });
+  test('maps', () => {
+    const fn = jest.fn();
+    const km = new testTarget.Keymap([
+      { desc: 'test', keys: 'Control+a', handler: fn },
+      { desc: 'test2', keys: 'ControlOrMeta+a', handler: fn },
+    ]);
+    expect(km.maps).toEqual([
+      {
+        desc: 'test',
+        keyList: ['control', 'a'],
+        keys: 'control+a',
+        rawKeys: 'Control+a',
+      },
+      {
+        desc: 'test2',
+        keyList: ['meta', 'a'],
+        keys: 'controlormeta+a',
+        rawKeys: 'ControlOrMeta+a',
+      },
+    ]);
+  });
 });
