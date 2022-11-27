@@ -9,6 +9,7 @@ module.exports = {
     },
   },
   collectCoverageFrom: [
+    'src/**',
     'packages/**/src/**',
     '!**/packages/**/dist/**',
     '!**/packages/**/src/index.ts',
