@@ -24,7 +24,7 @@ export interface KeyMap {
 export type HandledKeyMap = KeyMap & { rawKeys: string; keyList: string[] };
 
 /**
- * 按键绑定策略
+ * 按键绑定策略类型
  *
  * recordAll 记忆全部按下的按键
  *
@@ -34,7 +34,7 @@ export type HandledKeyMap = KeyMap & { rawKeys: string; keyList: string[] };
  *
  * 默认使用recordCompose不会漏键，如果没有meta键的系统可以使用recordAll，组合更加随意
  */
-export type KeymapStrategy = 'recordAll' | 'recordCompose';
+export type StrategyType = 'recordAll' | 'recordCompose';
 
 /**
  * 策略声明类型

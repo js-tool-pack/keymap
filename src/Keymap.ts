@@ -1,4 +1,4 @@
-import type { HandledKeyMap, KeyMap, KeymapStrategy } from './types';
+import type { HandledKeyMap, KeyMap, StrategyType } from './types';
 import { keymapStrategy } from './strategy';
 import { handleKeys } from './utils';
 
@@ -23,7 +23,7 @@ export class Keymap {
   constructor(
     maps: KeyMap[],
     el: HTMLElement | Window = window,
-    strategy: KeymapStrategy = 'recordCompose',
+    strategy: StrategyType = 'recordCompose',
   ) {
     // 处理keys
     this.registeredMaps = this.handleMaps(maps);

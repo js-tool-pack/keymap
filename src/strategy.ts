@@ -1,6 +1,6 @@
-import type { Handler, KeymapStrategy } from './types';
+import type { Strategy, StrategyType } from './types';
 
-export const keymapStrategy: Record<KeymapStrategy, Handler> = {
+export const keymapStrategy: Record<StrategyType, Strategy> = {
   // 记忆全部按下的按键
   recordAll(el, maps) {
     const dom = el as HTMLElement;
@@ -19,7 +19,7 @@ export const keymapStrategy: Record<KeymapStrategy, Handler> = {
 
       console.log('keymap', keySet);
 
-      return find?.handler(e);
+      return find?.handler.call(find, e);
     };
 
     const keyupHandler = (e: KeyboardEvent) => {
@@ -63,15 +63,17 @@ export const keymapStrategy: Record<KeymapStrategy, Handler> = {
       return composeKeySet.has(key);
     }
 
+    /**
+     * 给键分类
+     */
     function classifyKey(keyList: string[]): { key: string; composeKeys: ComposeKey[] } {
       return keyList.reduce(
         (res, key) => {
           key = key.toLowerCase();
-          if (isComposeKey(key)) {
-            res.composeKeys.push(key);
-          } else {
-            res.key = key;
-          }
+
+          if (isComposeKey(key)) res.composeKeys.push(key);
+          else res.key = key;
+
           return res;
         },
         { key: '', composeKeys: [] as ComposeKey[] },
@@ -107,7 +109,7 @@ export const keymapStrategy: Record<KeymapStrategy, Handler> = {
 
         console.log('keymap', pressComposeKeySet, key);
 
-        find?.handler(e);
+        find?.handler.call(find, e);
       };
 
       const keyupHandler = (e: KeyboardEvent) => {

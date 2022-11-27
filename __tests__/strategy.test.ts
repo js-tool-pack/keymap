@@ -1,0 +1,94 @@
+import { Keymap, StrategyType } from '../src';
+import { isMac } from '../src/utils';
+
+function useEvent(el: Window | HTMLElement, type: keyof HTMLElementEventMap) {
+  const e = document.createEvent('Events') as KeyboardEvent;
+  e.initEvent(type, true, true);
+  return {
+    trigger() {
+      delete (e as any).key;
+      el.dispatchEvent(e);
+    },
+    setKey(key: string) {
+      (e as any).key = key;
+      el.dispatchEvent(e);
+    },
+  };
+}
+
+const triggerKeydown = useEvent(window, 'keydown').setKey;
+const triggerKeyup = useEvent(window, 'keyup').setKey;
+
+describe('strategy', function () {
+  function common(type: StrategyType) {
+    const fn = jest.fn();
+    const km = new Keymap([{ keys: 'ctrl+r', handler: fn }], window, type);
+
+    triggerKeydown('control');
+    triggerKeydown('r');
+
+    expect(fn.mock.calls.length).toBe(1);
+
+    triggerKeyup('r');
+    expect(fn.mock.calls.length).toBe(1);
+
+    triggerKeydown('r');
+    expect(fn.mock.calls.length).toBe(2);
+
+    useEvent(window, 'blur').trigger();
+    // blur会清理所有按下的记录，所以不会触发
+    triggerKeydown('r');
+    expect(fn.mock.calls.length).toBe(2);
+
+    triggerKeyup('control');
+
+    km.destroy();
+    expect(() => km.add({ keys: 'a', handler: fn })).toThrow();
+  }
+  test('record all', () => {
+    common('recordAll');
+
+    isMac.userAgent = 'mac';
+
+    const fn = jest.fn();
+    const km = new Keymap([{ keys: 'ctrlOrMeta+r+c', handler: fn }], window, 'recordAll');
+
+    triggerKeydown('control');
+    triggerKeydown('r');
+    triggerKeydown('c');
+    expect(fn.mock.calls.length).toBe(0);
+    km.destroy();
+
+    new Keymap([{ keys: 'ctrlOrMeta+r+c', handler: fn }], window, 'recordAll');
+
+    triggerKeydown('meta');
+    triggerKeydown('r');
+    triggerKeydown('c');
+    expect(fn.mock.calls.length).toBe(1);
+
+    triggerKeyup('meta');
+
+    isMac.userAgent = navigator.userAgent;
+  });
+  test('record compose', () => {
+    common('recordCompose');
+
+    const fn = jest.fn();
+    new Keymap([{ keys: 'ctrl+r+c', handler: fn }], window, 'recordCompose');
+
+    triggerKeydown('control');
+    triggerKeydown('r');
+    expect(fn.mock.calls.length).toBe(0);
+
+    triggerKeydown('c');
+    expect(fn.mock.calls.length).toBe(1);
+
+    triggerKeyup('control');
+    triggerKeyup('r');
+    triggerKeyup('c');
+
+    triggerKeydown('control');
+    triggerKeydown('c');
+    expect(fn.mock.calls.length).toBe(2);
+  });
+});
