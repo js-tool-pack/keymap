@@ -224,7 +224,7 @@ async function setup() {
     const { start } = await prompt<{ start: boolean }>({
       type: 'confirm',
       name: 'start',
-      message: '是否开始初始化？',
+      message: '是否开始添加child package？',
       initial: false,
       required: true,
     });

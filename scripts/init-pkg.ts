@@ -114,6 +114,15 @@ async function getConfig() {
 }
 async function setup() {
   try {
+    const { start } = await prompt<{ start: boolean }>({
+      type: 'confirm',
+      name: 'start',
+      message: '是否开始初始化？',
+      initial: false,
+      required: true,
+    });
+    if (!start) return;
+
     console.log(chalk.cyan('初始化package.json开始...'));
     const config = await getConfig();
     //  console.log(config);
