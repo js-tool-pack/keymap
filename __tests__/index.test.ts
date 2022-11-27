@@ -9,8 +9,8 @@ describe('keymap', function () {
     km.trigger('Control+a');
     expect(fn.mock.calls.length).toBe(1);
 
-    km.trigger('Control+a');
-    km.trigger('Control+a');
+    km.trigger('control+a');
+    km.trigger('Ctrl+a');
     expect(fn.mock.calls.length).toBe(3);
   });
   test('clear', () => {
@@ -45,5 +45,32 @@ describe('keymap', function () {
     expect(fn.mock.calls.length).toBe(0);
     km.trigger('Control+b');
     expect(fn.mock.calls.length).toBe(1);
+  });
+  test('remove', () => {
+    const fn = jest.fn();
+    const fn2 = jest.fn();
+    const km = new testTarget.Keymap([
+      { keys: 'Control+a', handler: fn },
+      { keys: 'Control+b', handler: fn2 },
+    ]);
+
+    expect(fn.mock.calls.length).toBe(0);
+    km.trigger('ctrl+a');
+    km.trigger('ctrl+b');
+    expect(fn.mock.calls.length).toBe(1);
+    expect(fn2.mock.calls.length).toBe(1);
+
+    km.remove('ctrl+c');
+    km.trigger('ctrl+a');
+    km.trigger('ctrl+b');
+    expect(fn.mock.calls.length).toBe(2);
+    expect(fn2.mock.calls.length).toBe(2);
+
+    km.remove('Control+a');
+    km.remove('Ctrl+b');
+    km.trigger('ctrl+a');
+    km.trigger('ctrl+b');
+    expect(fn.mock.calls.length).toBe(2);
+    expect(fn2.mock.calls.length).toBe(2);
   });
 });
