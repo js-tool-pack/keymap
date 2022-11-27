@@ -2,29 +2,50 @@ import type { HandledKeyMap, KeyMap, KeymapStrategy } from './types';
 import { keymapStrategy } from './strategy';
 import { handleKeys } from './utils';
 
+/**
+ * 主类
+ */
 export class Keymap {
-  private readonly handledMaps!: HandledKeyMap[];
+  /**
+   * 已注册的所有组合键
+   */
+  private readonly registeredMaps!: HandledKeyMap[];
+  /**
+   * 取消注册
+   */
   private readonly canceler: Function;
 
+  /**
+   * @param maps 事件绑定
+   * @param el 绑定的dom对象，默认为window
+   * @param strategy 绑定策略，分为记录全部(recordAll)和只记录组合键(recordCompose)，默认为只记录组合键
+   */
   constructor(
     maps: KeyMap[],
     el: HTMLElement | Window = window,
     strategy: KeymapStrategy = 'recordCompose',
   ) {
     // 处理keys
-    this.handledMaps = this.handleMaps(maps);
-    this.canceler = keymapStrategy[strategy](el, this.handledMaps);
+    this.registeredMaps = this.handleMaps(maps);
+    this.canceler = keymapStrategy[strategy](el, this.registeredMaps);
   }
 
+  /**
+   * 处理组合键数组
+   */
   private handleMaps(maps: KeyMap[]) {
     return maps.map<HandledKeyMap>((item) => {
       const [keys, keyList] = handleKeys(item.keys);
       return { ...item, rawKeys: item.keys, keys, keyList };
     });
   }
+
+  /**
+   * 根据keys查找所在index
+   */
   private findIndex(keys: string): number {
     const handledKeys = handleKeys(keys);
-    return this.handledMaps.findIndex((map) => {
+    return this.registeredMaps.findIndex((map) => {
       if (map.rawKeys === keys) return true;
       if (map.keys === handledKeys[0]) return true;
 
@@ -35,31 +56,69 @@ export class Keymap {
     });
   }
 
-  destroy() {
-    this.canceler();
-    this.handledMaps.length = 0;
-    (this.add as any) = () => {
-      throw new Error('destroyed');
-    };
-  }
+  /**
+   * 手动触发快捷键
+   *
+   * @example
+   *
+   * ```ts
+   * let count = 0;
+   * const km = new Keymap([{ keys: 'Control+a', handler: ()=> count++ }]);
+   *
+   * km.trigger('Control+a');
+   * console.log(count); // 1
+   *
+   * km.trigger('Ctrl+a');
+   * console.log(count); // 2
+   * ```
+   */
   trigger(keys: string) {
     const index = this.findIndex(keys);
-    this.handledMaps[index]?.handler();
+    this.registeredMaps[index]?.handler();
   }
+
+  /**
+   * 可用于显示所有的快捷键
+   * @returns 所有已注册快捷键
+   */
   get maps(): Omit<HandledKeyMap, 'handler'>[] {
-    return JSON.parse(JSON.stringify(this.handledMaps));
+    return JSON.parse(JSON.stringify(this.registeredMaps));
   }
+
+  /**
+   * 判断快捷键是否已经被绑定
+   */
   has(keys: string): boolean {
     return this.findIndex(keys) > -1;
   }
+
+  /**
+   * 添加组合键
+   * @returns 是否添加成功
+   */
   add(map: KeyMap): boolean {
     const exist = this.has(map.keys);
-    !exist && this.handledMaps.push(...this.handleMaps([map]));
+    !exist && this.registeredMaps.push(...this.handleMaps([map]));
     return !exist;
   }
+
+  /**
+   * 移除组合键
+   */
   remove(keys: string): void {
     const index = this.findIndex(keys);
     if (index === -1) return;
-    this.handledMaps.splice(index, 1);
+    this.registeredMaps.splice(index, 1);
+  }
+
+  /**
+   * 销毁按键绑定，之后再调用add会报错
+   */
+  destroy() {
+    this.canceler();
+    this.registeredMaps.length = 0;
+    (this.add as any) = () => {
+      throw new Error('destroyed');
+    };
   }
 }
