@@ -33,8 +33,12 @@ export class Keymap {
     });
   }
 
-  cancel() {
+  destroy() {
     keymapStrategy[this.strategy](this.el, this.handledMaps);
+    this.handledMaps.length = 0;
+    (this.add as any) = () => {
+      throw new Error('destroyed');
+    };
   }
   trigger(keys: string) {
     const index = this.findIndex(keys);
@@ -55,9 +59,5 @@ export class Keymap {
     const index = this.findIndex(keys);
     if (index === -1) return;
     this.handledMaps.splice(index, 1);
-  }
-  clear(): void {
-    this.cancel();
-    this.handledMaps.length = 0;
   }
 }
