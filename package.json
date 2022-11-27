@@ -1,8 +1,8 @@
 {
-  "name": "lib-starter",
+  "name": "@tool-pack/keymap",
   "version": "0.0.0",
   "packageManager": "pnpm@7.1.0",
-  "description": "一个基于pnpm typescript monorepo/multirepo的lib快速启动仓库模板",
+  "description": "🛠 keymap,键盘快捷键绑定工具",
   "scripts": {
     "pkg:init": "esno scripts/init-pkg.ts",
     "pkg:new": "esno scripts/new-pkg.ts",
@@ -30,18 +30,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mengxinssfd/lib-starter.git"
+    "url": "git+https://github.com/mengxinssfd/keymap.git"
   },
   "keywords": [
-    "lib",
-    "starter"
+    "keymap"
   ],
   "author": "dyh_a",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mengxinssfd/lib-starter/issues"
+    "url": "https://github.com/mengxinssfd/keymap/issues"
   },
-  "homepage": "https://github.com/mengxinssfd/lib-starter#readme",
+  "homepage": "https://github.com/mengxinssfd/keymap#readme",
   "devDependencies": {
     "@commitlint/cli": "^17.3.0",
     "@commitlint/config-conventional": "^17.3.0",
@@ -85,5 +84,30 @@
     "tslib": "^2.4.1",
     "typedoc": "^0.23.21",
     "typescript": "^4.9.3"
+  },
+  "main": "dist/keymap.cjs.js",
+  "module": "dist/keymap.esm-bundler.js",
+  "types": "dist/keymap.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "node": "./dist/keymap.cjs.js",
+        "default": "./dist/keymap.esm-bundler.js"
+      },
+      "require": "./dist/keymap.cjs.js"
+    }
+  },
+  "buildOptions": {
+    "name": "Keymap",
+    "formats": [
+      "esm-bundler",
+      "esm-browser",
+      "cjs",
+      "global"
+    ]
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
