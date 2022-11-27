@@ -30,5 +30,6 @@ describe('utils', function () {
     expect(handleKeys('cmd+a')).toEqual(['cmd+a', ['meta', 'a']]);
     isMac.userAgent = '';
     expect(handleKeys('ControlOrMeta+a')).toEqual(['controlormeta+a', ['control', 'a']]);
+    expect(handleKeys('ControlOrMeta++')).toEqual(['controlormeta++', ['control', '+']]);
   });
 });

@@ -26,7 +26,10 @@ export function handleKeys(keys: string): [string, string[]] {
     if (CtrlAlias.includes(key)) return 'control';
     return key;
   }
-  // const keyList = keys.replace(/\+(\+)?/g, ' $1').split(' ');
-  const keyList = keys.split(/(?<!\+)\+/).map((key) => replace(key));
+  const keyList = keys
+    .replace(/\+(\+)?/g, ' $1')
+    .split(' ')
+    .map((key) => replace(key));
+  // const keyList = keys.split(/(?<!\+)\+/).map((key) => replace(key));
   return [keys, keyList];
 }
