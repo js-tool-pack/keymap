@@ -4,14 +4,16 @@ import { handleKeys } from './utils';
 
 export class Keymap {
   private readonly handledMaps!: HandledKeyMap[];
+  private readonly canceler: Function;
 
   constructor(
     maps: KeyMap[],
-    private el: HTMLElement | Window = window,
-    private strategy: KeymapStrategy = 'recordCompose',
+    el: HTMLElement | Window = window,
+    strategy: KeymapStrategy = 'recordCompose',
   ) {
     // 处理keys
     this.handledMaps = this.handleMaps(maps);
+    this.canceler = keymapStrategy[strategy](el, this.handledMaps);
   }
 
   private handleMaps(maps: KeyMap[]) {
@@ -34,7 +36,7 @@ export class Keymap {
   }
 
   destroy() {
-    keymapStrategy[this.strategy](this.el, this.handledMaps);
+    this.canceler();
     this.handledMaps.length = 0;
     (this.add as any) = () => {
       throw new Error('destroyed');
