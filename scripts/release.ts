@@ -153,27 +153,30 @@ async function getVersion(preId: string, currentVersion: string) {
           return {
             message: i,
             name: version,
-            hint: version,
+            hint: 'v' + version,
           };
         })
-        .concat([
-          { message: `custom cur(${currentVersion})`, name: 'custom', hint: currentVersion },
-        ]),
+        .concat([{ message: `custom`, name: 'custom', hint: '' }]),
     },
   ]);
   if (release === 'custom') {
     ({ version: targetVersion } = await prompt<{ version: string }>({
       type: 'input',
       name: 'version',
-      message: 'Input custom version',
+      message: `Input custom version, cur(v${rootPkgJson.version}):`,
       initial: currentVersion,
+      validate(value) {
+        // 校验版本号
+        if (!semver.valid(value)) return `invalid version: ${value}`;
+        if (semver.gte(rootPkgJson.version, value)) return '新版本号必须大于旧版本号';
+
+        return true;
+      },
     }));
   } else {
     targetVersion = release;
   }
-  if (!semver.valid(targetVersion)) {
-    throw new Error(`invalid target version: ${targetVersion}`);
-  }
+
   const { yes } = await prompt<{ yes: boolean }>({
     type: 'confirm',
     name: 'yes',
