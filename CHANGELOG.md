@@ -1,3 +1,5 @@
+## [0.0.1-beta.0](https://github.com/js-tool-pack/keymap/compare/v0.0.0-beta.1...v0.0.1-beta.0) (2022-11-27)
+
 # [0.0.0-beta.1](https://github.com/js-tool-pack/keymap/compare/v0.0.0...v0.0.0-beta.1) (2022-11-27)
 
 # 0.0.0 (2022-11-27)
