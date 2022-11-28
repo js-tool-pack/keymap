@@ -1,3 +1,5 @@
+## [0.0.3](https://github.com/js-tool-pack/keymap/compare/v0.0.2...v0.0.3) (2022-11-28)
+
 ## [0.0.2](https://github.com/js-tool-pack/keymap/compare/v0.0.1...v0.0.2) (2022-11-28)
 
 ### Bug Fixes

@@ -1,6 +1,6 @@
 {
   "name": "@tool-pack/keymap",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "packageManager": "pnpm@7.1.0",
   "description": "🛠 keymap,键盘快捷键绑定工具",
   "scripts": {
