@@ -42,9 +42,5 @@
     "allowUnusedLabels": false,
     "allowUnreachableCode": false
   },
-  "include": [
-    "tests/*/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.ts",
-  ]
+  "include": ["__tests__/**/*.ts", "tests/*/*.ts", "src/**/*.d.ts", "src/**/*.ts"]
 }
