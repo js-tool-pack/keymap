@@ -1,6 +1,6 @@
 import type { HandledKeyOptions, KeyOptions, StrategyType } from './types';
 import { keymapStrategy } from './strategy';
-import { handleKeys, castArray } from './utils';
+import { handleKeys, castArray, defaultKeyAliasMap } from './utils';
 
 /**
  * Keymap配置项
@@ -19,6 +19,41 @@ export interface KeymapConfig {
  * 主类
  */
 export class Keymap {
+  /**
+   * 按键别名映射map
+   *
+   * @default
+   * ```ts
+   * {
+   *    meta: 'meta',
+   *    command: 'meta',
+   *    cmd: 'meta',
+   *    super: 'meta',
+   *    '⌘': 'meta',
+   *    control: 'control',
+   *    ctrl: 'control',
+   *    '⌃': 'control',
+   *    '⇧': 'shift',
+   *    option: 'alt',
+   *    '⌥': 'alt',
+   *    esc: 'escape',
+   *    return: 'enter',
+   *    '↩︎': 'enter',
+   *    '⏎': 'enter',
+   *    plus: '+',
+   *    space: ' ',
+   *    '␣': ' ',
+   *    '⌫': 'backspace',
+   *    '⇥': 'tab',
+   *    '←': 'arrowleft',
+   *    '→': 'arrowright',
+   *    '↑': 'arrowup',
+   *    '↓': 'arrowdown'
+   * }
+   * ```
+   */
+  private _keyAliasMap = defaultKeyAliasMap;
+
   /**
    * 已注册的所有组合键
    */
@@ -66,6 +101,86 @@ export class Keymap {
   }
 
   /**
+   * 获取按键别名配置
+   *
+   * 注意⚠️：由于复制了一份obj，所以使用Object(keyAliasMap,{})不会起效
+   */
+  get keyAliasMap(): Record<string, string> {
+    return { ...this._keyAliasMap };
+  }
+
+  /**
+   * 设置按键别名
+   *
+   * @example
+   * ```ts
+   *
+   * const km = new Keymap([{ desc: 'test', keys: ['Control + a', 'Meta + a'], handler: () => {} }]);
+   *
+   * // [
+   * //   {
+   * //     desc: 'test',
+   * //     keyList: ['control', 'a'],
+   * //     keys: 'control + a',
+   * //     rawKeys: ['Control + a', 'Meta + a'],
+   * //   },
+   * //   {
+   * //     desc: 'test',
+   * //     keyList: ['meta', 'a'],
+   * //     keys: 'meta + a',
+   * //     rawKeys: ['Control + a', 'Meta + a'],
+   * //   },
+   * // ]
+   * console.log(km.maps);
+   *
+   * console.log(km.has('ctrl+a')); // true
+   *
+   * // 使用 Object.assign(km.keyAliasMap, { ctrl: '' }) 不起作用
+   * Object.assign(km.keyAliasMap, { ctrl: '' });
+   * console.log(km.has('ctrl+a')); // true
+   *
+   * // 清理所有别名
+   * km.keyAliasMap = {};
+   * // ctrl不再是Control的别名，所以 ctrl+a 不存在
+   * console.log(km.has('ctrl+a')); // false
+   *
+   * // 让control成为alt的别名
+   * console.log(km.has('alt+a')); // false
+   * km.keyAliasMap = { control: 'alt' };
+   * console.log(km.has('alt+a')); // true
+   *
+   * // [
+   * //   {
+   * //     desc: 'test',
+   * //     keyList: ['alt', 'a'],
+   * //     keys: 'control + a',
+   * //     rawKeys: ['Control + a', 'Meta + a'],
+   * //   },
+   * //   {
+   * //     desc: 'test',
+   * //     keyList: ['meta', 'a'],
+   * //     keys: 'meta + a',
+   * //     rawKeys: ['Control + a', 'Meta + a'],
+   * //   },
+   * // ]
+   * console.log(km.maps);
+   * ```
+   */
+  set keyAliasMap(alias: Record<string, string>) {
+    this._keyAliasMap = alias;
+    const originMaps: KeyOptions[] = [];
+    this.registeredMaps.forEach((m) => {
+      if (originMaps.find((o) => o.keys === m.rawKeys)) return;
+      const keyOptions: KeyOptions = { keys: m.rawKeys, handler: m.handler };
+      if (m.desc) keyOptions.desc = m.desc;
+      originMaps.push(keyOptions);
+    });
+    const registeredMaps = this.handleMaps(originMaps);
+    this.registeredMaps.length = 0;
+    this.registeredMaps.push(...registeredMaps);
+  }
+
+  /**
    * 处理组合键数组
    */
   private handleMaps(maps: KeyOptions[]) {
@@ -73,7 +188,7 @@ export class Keymap {
       const keysList = castArray(item.keys);
       res.push(
         ...keysList.map<HandledKeyOptions>((k) => {
-          const [keys, keyList] = handleKeys(k);
+          const [keys, keyList] = handleKeys(k, this._keyAliasMap);
           return { ...item, rawKeys: item.keys, keys, keyList };
         }),
       );
@@ -85,7 +200,7 @@ export class Keymap {
    * 根据keys查找所在index
    */
   private findIndex(keys: string): number {
-    const handledKeys = handleKeys(keys);
+    const handledKeys = handleKeys(keys, this._keyAliasMap);
     return this.registeredMaps.findIndex((map) => {
       if (map.rawKeys === keys) return true;
       if (map.keys === handledKeys[0]) return true;
