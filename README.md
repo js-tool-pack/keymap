@@ -1,16 +1,55 @@
 # @tool-pack/keymap
 
-🛠 keymap,键盘快捷键绑定工具。
+> 🛠 keymap,键盘快捷键绑定工具。
+>
+> keymap 是一个用于浏览器的库。它允许开发人员轻松设置快捷键绑定，使用按键组合设置复杂的绑定。keymap 还提供了绑定不同的 dom，可以使用不同的 dom 绑定不同的事件，允许你将绑定范围化到应用程序的各个部分。
 
-此工具来源于 [mditor-useKeymap](https://github.com/mditor-dev/mditor/blob/af73e66/src/utils/useKeymap.ts) 函数，在此抽取成独立库。
+此工具来源于 [mditor-useKeymap](https://github.com/mditor-dev/mditor/blob/af73e66/src/utils/useKeymap.ts) 函数，在此优化并抽取成独立库。
 
 - [document](https://js-tool-pack.github.io/keymap/)
 - [demo](https://stackblitz.com/edit/typescript-b6dzrc?file=index.ts)
 
-## 使用方式
+## 快速使用
+
+### 安装
+
+#### npm module
 
 ```shell
 npm install @tool-pack/keymap --save
+```
+
+keymap 支持 esm 与 commonjs 两种模块导入方式
+
+```typescript
+import { Keymap } from '@tool-pack/keymap';
+
+new Keymap([
+  {
+    keys: 'MetaOrCtrl+a',
+    desc: 'test',
+    handler() {
+      /* to something */
+    },
+  },
+]);
+```
+
+#### cdn
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@tool-pack/keymap/dist/keymap.global.prod.js"></script>
+<script>
+  new Keymap.Keymap([
+    {
+      keys: 'MetaOrCtrl+a',
+      desc: 'test',
+      handler() {
+        /* to something */
+      },
+    },
+  ]);
+</script>
 ```
 
 ## 使用
@@ -112,4 +151,34 @@ km.add({
     return preventDefault(e);
   },
 });
+```
+
+注意 ⚠️：
+
+浏览器有自己的快捷方式，例如，在大多数浏览器中， ctrl+o 的意思是“打开文件”。
+虽然在通常情况下，你可以随时调用 e.preventDefault()，
+但 ctrl+o 毕竟是浏览器快捷键的一部分，具体实现并不通用，
+例如在 safari 上 js 无法拦截默认事件，也不会触发自定义快捷键。
+
+#### 任意组合键
+
+由于 macos 的 bug：按下 meta 键后，普通的按键 keyup 会漏掉，
+所以默认了一种不会漏 keyup 的策略，但是这也导致了不能使用任意组合键，
+只能用特殊键搭配普通键
+
+```typescript
+const km = new Keymap(
+  [
+    {
+      keys: 'a+b',
+      desc: 'a+b',
+      handler(e) {
+        alert(this.desc);
+        return preventDefault(e);
+      },
+    },
+  ],
+  window,
+  'recordAll',
+);
 ```
