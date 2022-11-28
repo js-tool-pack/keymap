@@ -132,7 +132,7 @@ const km = new Keymap([
 
 // 后追加，触发后移除
 km.add({
-  keys: 'shift+a',
+  keys: ['shift+a', 'shift+b'],
   desc: 'once event，一次性快捷键，只在第一次有效',
   handler() {
     alert(this.desc);
@@ -167,18 +167,16 @@ km.add({
 只能用特殊键搭配普通键
 
 ```typescript
-const km = new Keymap(
-  [
-    {
-      keys: 'a+b',
-      desc: 'a+b',
-      handler(e) {
-        alert(this.desc);
-        return preventDefault(e);
-      },
+import { Keymap } from '@tool-pack/keymap';
+
+const km = new Keymap({ el: window, strategy: 'recordAll' }, [
+  {
+    keys: 'a+b',
+    desc: 'a+b',
+    handler(e) {
+      alert(this.desc);
+      return preventDefault(e);
     },
-  ],
-  window,
-  'recordAll',
-);
+  },
+]);
 ```
