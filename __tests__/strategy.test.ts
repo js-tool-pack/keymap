@@ -24,7 +24,7 @@ const triggerKeyup = useEvent(window, 'keyup').setKey;
 describe('strategy', function () {
   function common(type: StrategyType) {
     const fn = jest.fn();
-    const km = new Keymap([{ keys: 'ctrl+r', handler: fn }], window, type);
+    const km = new Keymap({ strategy: type }, [{ keys: 'ctrl+r', handler: fn }]);
 
     triggerKeydown('control');
     triggerKeydown('r');
@@ -53,7 +53,9 @@ describe('strategy', function () {
     isMac.userAgent = 'mac';
 
     const fn = jest.fn();
-    const km = new Keymap([{ keys: 'ctrlOrMeta+r+c', handler: fn }], window, 'recordAll');
+    const km = new Keymap({ strategy: 'recordAll', el: window }, [
+      { keys: 'ctrlOrMeta+r+c', handler: fn },
+    ]);
 
     triggerKeydown('control');
     triggerKeydown('r');
@@ -61,7 +63,7 @@ describe('strategy', function () {
     expect(fn.mock.calls.length).toBe(0);
     km.destroy();
 
-    new Keymap([{ keys: 'ctrlOrMeta+r+c', handler: fn }], window, 'recordAll');
+    new Keymap({ strategy: 'recordAll' }, [{ keys: 'ctrlOrMeta+r+c', handler: fn }]);
 
     triggerKeydown('meta');
     triggerKeydown('r');
@@ -76,7 +78,7 @@ describe('strategy', function () {
     common('recordCompose');
 
     const fn = jest.fn();
-    new Keymap([{ keys: 'ctrl+r+c', handler: fn }], window, 'recordCompose');
+    new Keymap([{ keys: 'ctrl+r+c', handler: fn }]);
 
     triggerKeydown('control');
     triggerKeydown('r');

@@ -16,7 +16,7 @@ describe('keymap', function () {
   });
   test('base recordAll', () => {
     const fn = jest.fn();
-    const km = new Keymap([{ keys: 'Control+a', handler: fn }], window, 'recordAll');
+    const km = new Keymap([{ keys: 'Control+a', handler: fn }]);
     expect(fn.mock.calls.length).toBe(0);
 
     km.trigger('Control+a');
