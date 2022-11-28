@@ -28,9 +28,18 @@ describe('utils', function () {
     expect(handleKeys('Command+a')).toEqual(['command+a', ['meta', 'a']]);
     expect(handleKeys('meta+a')).toEqual(['meta+a', ['meta', 'a']]);
     expect(handleKeys('cmd+a')).toEqual(['cmd+a', ['meta', 'a']]);
+    expect(handleKeys('Mod+a')).toEqual(['mod+a', ['meta', 'a']]);
     isMac.userAgent = '';
     expect(handleKeys('ControlOrMeta+a')).toEqual(['controlormeta+a', ['control', 'a']]);
     expect(handleKeys('ControlOrMeta++')).toEqual(['controlormeta++', ['control', '+']]);
+    expect(handleKeys('Option+a')).toEqual(['option+a', ['alt', 'a']]);
+    expect(handleKeys('ESC+a')).toEqual(['esc+a', ['escape', 'a']]);
+    expect(handleKeys('return+a')).toEqual(['return+a', ['enter', 'a']]);
+    expect(handleKeys('plus+a')).toEqual(['plus+a', ['+', 'a']]);
+    expect(handleKeys('space')).toEqual(['space', [' ']]);
+    expect(handleKeys(' ')).toEqual([' ', [' ']]);
+    expect(handleKeys('␣')).toEqual(['␣', [' ']]);
+    expect(handleKeys('⏎')).toEqual(['⏎', ['enter']]);
   });
   test('castArray', () => {
     const fn = castArray;

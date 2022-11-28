@@ -24,7 +24,11 @@ const triggerKeyup = useEvent(window, 'keyup').setKey;
 describe('strategy', function () {
   function common(type: StrategyType) {
     const fn = jest.fn();
-    const km = new Keymap({ strategy: type }, [{ keys: ['ctrl+r', 'ctrl+t'], handler: fn }]);
+    const fn2 = jest.fn();
+    const km = new Keymap({ strategy: type }, [
+      { keys: ['ctrl+r', 'ctrl+t'], handler: fn },
+      { keys: ['space'], handler: fn2 },
+    ]);
 
     triggerKeydown('control');
     triggerKeydown('r');
@@ -37,7 +41,8 @@ describe('strategy', function () {
     triggerKeydown('r');
     expect(fn.mock.calls.length).toBe(2);
 
-    useEvent(window, 'blur').trigger();
+    const blur = useEvent(window, 'blur').trigger;
+    blur();
     // blur会清理所有按下的记录，所以不会触发
     triggerKeydown('r');
     expect(fn.mock.calls.length).toBe(2);
@@ -47,6 +52,16 @@ describe('strategy', function () {
     triggerKeydown('control');
     triggerKeydown('t');
     expect(fn.mock.calls.length).toBe(3);
+
+    blur();
+
+    triggerKeydown(' ');
+    triggerKeydown(' ');
+    expect(fn2.mock.calls.length).toBe(2);
+
+    triggerKeydown('Shift');
+    triggerKeydown(' ');
+    expect(fn2.mock.calls.length).toBe(2);
 
     km.destroy();
     expect(() => km.add({ keys: 'a', handler: fn })).toThrow();

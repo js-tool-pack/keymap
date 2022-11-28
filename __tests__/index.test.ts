@@ -1,5 +1,5 @@
 import { Keymap } from '../src';
-import { isMac } from '../src/utils';
+import { defaultKeyAliasMap, isMac } from '../src/utils';
 
 describe('keymap', function () {
   test('base', () => {
@@ -139,5 +139,56 @@ describe('keymap', function () {
       },
     ]);
     isMac.userAgent = navigator.userAgent;
+  });
+  test('keyAliasMap', () => {
+    const fn = jest.fn();
+    const km = new Keymap([{ desc: 'test', keys: ['Control + a', 'Meta + a'], handler: fn }]);
+
+    expect(km.maps).toEqual([
+      {
+        desc: 'test',
+        keyList: ['control', 'a'],
+        keys: 'control + a',
+        rawKeys: ['Control + a', 'Meta + a'],
+      },
+      {
+        desc: 'test',
+        keyList: ['meta', 'a'],
+        keys: 'meta + a',
+        rawKeys: ['Control + a', 'Meta + a'],
+      },
+    ]);
+
+    expect(km.has('ctrl+a')).toBeTruthy();
+    expect(km.keyAliasMap).toEqual(defaultKeyAliasMap);
+
+    // 使用 Object.assign(km.keyAliasMap, { ctrl: '' }) 不起作用
+    Object.assign(km.keyAliasMap, { ctrl: '' });
+    expect(km.has('ctrl+a')).toBeTruthy();
+
+    // 清理所有别名
+    km.keyAliasMap = {};
+    // ctrl不再是Control的别名，所以 ctrl+a 不存在
+    expect(km.has('ctrl+a')).toBeFalsy();
+
+    // 让control成为alt的别名
+    expect(km.has('alt+a')).toBeFalsy();
+    km.keyAliasMap = { control: 'alt' };
+    expect(km.has('alt+a')).toBeTruthy();
+
+    expect(km.maps).toEqual([
+      {
+        desc: 'test',
+        keyList: ['alt', 'a'],
+        keys: 'control + a',
+        rawKeys: ['Control + a', 'Meta + a'],
+      },
+      {
+        desc: 'test',
+        keyList: ['meta', 'a'],
+        keys: 'meta + a',
+        rawKeys: ['Control + a', 'Meta + a'],
+      },
+    ]);
   });
 });
