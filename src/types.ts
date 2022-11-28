@@ -3,7 +3,7 @@
  */
 export interface KeyOptions {
   /**
-   * 快捷键
+   * 单个组合快捷键或多个组合快捷键
    * @example
    * 'MetaOrControl+a'
    * 'MetaOrCtrl+a'
@@ -28,7 +28,7 @@ export interface KeyOptions {
  */
 export type HandledKeyOptions = Omit<KeyOptions, 'keys'> & {
   keys: string;
-  rawKeys: string;
+  rawKeys: string[] | string;
   keyList: string[];
 };
 

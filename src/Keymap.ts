@@ -75,7 +75,7 @@ export class Keymap {
       res.push(
         ...keysList.map<HandledKeyOptions>((k) => {
           const [keys, keyList] = handleKeys(k);
-          return { ...item, rawKeys: k, keys, keyList };
+          return { ...item, rawKeys: item.keys, keys, keyList };
         }),
       );
       return res;
