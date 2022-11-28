@@ -1,3 +1,10 @@
+## [0.0.6](https://github.com/js-tool-pack/keymap/compare/v0.0.5...v0.0.6) (2022-11-28)
+
+### Features
+
+- constructor config 支持 keyAliasMap ([bd96df0](https://github.com/js-tool-pack/keymap/commit/bd96df0357e81724fcda50101718da3d6ad8a41b))
+- 导出 defaultKeyAliasMap ([1d9466c](https://github.com/js-tool-pack/keymap/commit/1d9466c8148a4b3f9b080d5d875ba4643327a548))
+
 ## [0.0.5](https://github.com/js-tool-pack/keymap/compare/v0.0.3...v0.0.5) (2022-11-28)
 
 ### Features
