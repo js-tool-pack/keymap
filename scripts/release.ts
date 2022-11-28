@@ -226,9 +226,12 @@ async function setup() {
   step('\nGenerating changelog...');
   actions.genChangeLog();
 
-  // update pnpm-lock.yaml
-  step('\nUpdating lockfile...');
-  await exec(npmTool, ['install', '--prefer-offline']);
+  // monorepo才需要重新install依赖
+  if (isMonoRepo) {
+    // update pnpm-lock.yaml
+    step('\nUpdating lockfile...');
+    await exec(npmTool, ['install', '--prefer-offline']);
+  }
 
   step('\ngit commit...');
   await actions.gitCommit(config.targetVersion);
