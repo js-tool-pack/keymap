@@ -12,7 +12,7 @@ export interface KeyOptions {
    * 'Ctrl+a'
    * 'Meta+a'
    */
-  keys: string;
+  keys: string[] | string;
   /**
    * 快捷键触发时调用的函数
    */

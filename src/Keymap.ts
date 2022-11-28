@@ -1,6 +1,7 @@
 import type { HandledKeyOptions, KeyOptions, StrategyType } from './types';
 import { keymapStrategy } from './strategy';
 import { handleKeys } from './utils';
+import { castArray } from '@mxssfd/core';
 
 /**
  * Keymap配置项
@@ -35,6 +36,7 @@ export class Keymap {
    * @example
    * ```ts
    * new Keymap([{ desc:'select all', keys: 'Control+a', handler() {\/* do something *\/} }]);
+   * new Keymap([{ desc:'select all', keys: ['Control+a','Control+b'], handler() {\/* do something *\/} }]);
    * ```
    * @param maps 事件绑定选项数组
    */
@@ -54,7 +56,7 @@ export class Keymap {
   constructor(config: KeymapConfig, maps?: KeyOptions[]);
   constructor(...args: any[]) {
     const config: Required<KeymapConfig> = { el: window, strategy: 'recordCompose' };
-    let maps: KeyOptions[] = [];
+    let maps: KeyOptions[];
     if (args.length === 2) {
       Object.assign(config, args[0]);
       maps = args[1];
@@ -68,10 +70,16 @@ export class Keymap {
    * 处理组合键数组
    */
   private handleMaps(maps: KeyOptions[]) {
-    return maps.map<HandledKeyOptions>((item) => {
-      const [keys, keyList] = handleKeys(item.keys);
-      return { ...item, rawKeys: item.keys, keys, keyList };
-    });
+    return maps.reduce((res, item) => {
+      const keysList = castArray(item.keys);
+      res.push(
+        ...keysList.map<HandledKeyOptions>((k) => {
+          const [keys, keyList] = handleKeys(k);
+          return { ...item, rawKeys: k, keys, keyList };
+        }),
+      );
+      return res;
+    }, [] as HandledKeyOptions[]);
   }
 
   /**
@@ -153,7 +161,7 @@ export class Keymap {
    * @returns 是否添加成功
    */
   add(map: KeyOptions): boolean {
-    const exist = this.has(map.keys);
+    const exist = castArray(map.keys).every((keys) => this.has(keys));
     !exist && this.registeredMaps.push(...this.handleMaps([map]));
     return !exist;
   }
