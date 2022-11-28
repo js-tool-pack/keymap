@@ -26,7 +26,11 @@ export interface KeyOptions {
 /**
  * 处理后的快捷键参数对象
  */
-export type HandledKeyOptions = KeyOptions & { rawKeys: string; keyList: string[] };
+export type HandledKeyOptions = Omit<KeyOptions, 'keys'> & {
+  keys: string;
+  rawKeys: string;
+  keyList: string[];
+};
 
 /**
  * 按键绑定策略类型
