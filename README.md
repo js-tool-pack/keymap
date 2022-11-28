@@ -68,7 +68,7 @@ function preventDefault(e: KeyboardEvent) {
 // 初始添加多个快捷键
 const km = new Keymap([
   {
-    keys: 'Shift+*',
+    keys: 'Shift + *',
     desc: '*，不能单独用*，也不是shift + 8',
     handler(e) {
       alert(this.desc);
@@ -76,7 +76,7 @@ const km = new Keymap([
     },
   },
   {
-    keys: 'Ctrl+Shift+8',
+    keys: '⌃ + Shift + 8',
     desc: '加了ctrl后*又不行了，要改为8',
     handler(e) {
       alert(this.rawKeys);
@@ -84,7 +84,7 @@ const km = new Keymap([
     },
   },
   {
-    keys: 'Shift+&',
+    keys: '⇧ + &',
     desc: '&',
     handler(e) {
       alert(this.desc);
@@ -92,7 +92,7 @@ const km = new Keymap([
     },
   },
   {
-    keys: 'CtrlOrMeta+s',
+    keys: 'CtrlOrMeta + s',
     desc: 'save，保存',
     handler(e) {
       alert(this.desc);
@@ -100,7 +100,7 @@ const km = new Keymap([
     },
   },
   {
-    keys: 'CtrlOrMeta+shift+s',
+    keys: 'CtrlOrMeta + shift + s',
     desc: 'save as，另存为',
     handler(e) {
       alert(this.desc);
@@ -120,6 +120,38 @@ const km = new Keymap([
     desc: 'windows edge 会在alert关闭后打开地址栏输入框',
     handler() {
       alert(this.desc);
+    },
+  },
+  {
+    keys: 'esc',
+    desc: 'escape',
+    handler(e) {
+      alert(this.desc);
+      return preventDefault(e);
+    },
+  },
+  {
+    keys: '⏎',
+    desc: 'enter',
+    handler(e) {
+      alert(this.desc);
+      return preventDefault(e);
+    },
+  },
+  {
+    keys: '⇧+space',
+    desc: 'shift+space',
+    handler(e) {
+      alert(this.desc);
+      // return preventDefault(e);
+    },
+  },
+  {
+    keys: '↓',
+    desc: '↓',
+    handler(e) {
+      alert(this.desc);
+      // return preventDefault(e);
     },
   },
 ]);
@@ -167,8 +199,12 @@ km.add({
 #### 任意组合键
 
 由于 macos 的 bug：按下 meta 键后，普通的按键 keyup 会漏掉，
-所以默认了一种不会漏 keyup 的策略，但是这也导致了不能使用任意组合键，
-只能用特殊键搭配普通键
+所以默认了一种不会漏 keyup 的 `recordCompose` 策略，但是这也导致了不能使用任意组合键，
+只能用特殊键搭配普通键。
+
+若是需要使用任意组合键可使用 `recordAll` 策略
+
+recordAll：
 
 ```typescript
 import { Keymap } from '@tool-pack/keymap';
