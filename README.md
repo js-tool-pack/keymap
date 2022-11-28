@@ -72,7 +72,6 @@ const km = new Keymap([
     desc: '*，不能单独用*，也不是shift + 8',
     handler(e) {
       alert(this.desc);
-
       return preventDefault(e);
     },
   },
@@ -81,7 +80,6 @@ const km = new Keymap([
     desc: '加了ctrl后*又不行了，要改为8',
     handler(e) {
       alert(this.rawKeys);
-
       return preventDefault(e);
     },
   },
@@ -90,7 +88,6 @@ const km = new Keymap([
     desc: '&',
     handler(e) {
       alert(this.desc);
-
       return preventDefault(e);
     },
   },
@@ -99,7 +96,6 @@ const km = new Keymap([
     desc: 'save，保存',
     handler(e) {
       alert(this.desc);
-
       return preventDefault(e);
     },
   },
@@ -108,24 +104,22 @@ const km = new Keymap([
     desc: 'save as，另存为',
     handler(e) {
       alert(this.desc);
-
       return preventDefault(e);
     },
   },
   {
     keys: 'CtrlOrMeta+o',
-    desc: 'open file，打开文件',
+    desc: 'open file，打开文件（在safari中可能会被浏览器默认快捷键覆盖）',
     handler(e) {
       alert(this.desc);
-
       return preventDefault(e);
     },
   },
   {
     keys: 'CtrlOrMeta+k',
-    desc: 'test',
+    desc: 'windows edge 会在alert关闭后打开地址栏输入框',
     handler() {
-      alert(this.keyList.join(','));
+      alert(this.desc);
     },
   },
 ]);
@@ -133,10 +127,21 @@ const km = new Keymap([
 // 后追加，触发后移除
 km.add({
   keys: ['shift+a', 'shift+b'],
-  desc: 'once event，一次性快捷键，只在第一次有效',
+  desc: 'once event，一次性快捷键，各自可触发一次事件',
   handler() {
     alert(this.desc);
-    km.remove(this.rawKeys);
+    km.remove(this.keys);
+  },
+});
+
+km.add({
+  keys: ['shift+c', 'shift+d'],
+  desc: 'once event，次数共享',
+  handler() {
+    alert(this.desc);
+
+    const keysList = Array.isArray(this.rawKeys) ? this.rawKeys : [this.rawKeys];
+    keysList.forEach((keys) => km.remove(keys));
   },
 });
 
@@ -147,7 +152,6 @@ km.add({
   handler(e) {
     km.destroy();
     alert('destray');
-
     return preventDefault(e);
   },
 });
