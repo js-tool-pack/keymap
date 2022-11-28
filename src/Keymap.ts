@@ -3,6 +3,19 @@ import { keymapStrategy } from './strategy';
 import { handleKeys } from './utils';
 
 /**
+ * Keymap配置项
+ */
+export interface KeymapConfig {
+  /**
+   * 按键监听事件绑定对象
+   */
+  el?: HTMLElement | Window;
+  /**
+   * 快捷键策略
+   */
+  strategy?: StrategyType;
+}
+/**
  * 主类
  */
 export class Keymap {
@@ -17,23 +30,38 @@ export class Keymap {
   private readonly canceler: Function;
 
   /**
+   * 使用默认配置
+   *
    * @example
    * ```ts
-   * new Keymap([{ desc:'select all', keys: 'Control+a', handler() {\/* do something *\/} }], window, 'recordCompose');
+   * new Keymap([{ desc:'select all', keys: 'Control+a', handler() {\/* do something *\/} }]);
    * ```
-   *
-   * @param maps 事件绑定
-   * @param el 绑定的dom对象，默认为window
-   * @param strategy 绑定策略，分为记录全部(recordAll)和只记录组合键(recordCompose)，默认为只记录组合键
+   * @param maps 事件绑定选项数组
    */
-  constructor(
-    maps: KeyOptions[],
-    el: HTMLElement | Window = window,
-    strategy: StrategyType = 'recordCompose',
-  ) {
+  constructor(maps: KeyOptions[]);
+  /**
+   * 使用自定义配置
+   *
+   * @example
+   * ```ts
+   * new Keymap({el:window, strategy:'recordCompose'},[{ desc:'select all', keys: 'Control+a', handler() {\/* do something *\/} }]);
+   * ```
+   * @param config
+   * @param [config.el=window] 绑定的dom对象，默认为window
+   * @param [config.strategy='recordCompose'] 绑定策略，分为记录全部(recordAll)和只记录组合键(recordCompose)，默认为只记录组合键
+   * @param maps 事件绑定选项数组
+   */
+  constructor(config: KeymapConfig, maps?: KeyOptions[]);
+  constructor(...args: any[]) {
+    const config: Required<KeymapConfig> = { el: window, strategy: 'recordCompose' };
+    let maps: KeyOptions[] = [];
+    if (args.length === 2) {
+      Object.assign(config, args[0]);
+      maps = args[1];
+    } else maps = args[0];
     // 处理keys
     this.registeredMaps = this.handleMaps(maps);
-    this.canceler = keymapStrategy[strategy](el, this.registeredMaps);
+    this.canceler = keymapStrategy[config.strategy](config.el, this.registeredMaps);
   }
 
   /**
