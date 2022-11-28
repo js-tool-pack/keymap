@@ -169,12 +169,18 @@ export class Keymap {
   private handleMaps(maps: KeyOptions[]) {
     return maps.reduce((res, item) => {
       const keysList = castArray(item.keys);
-      res.push(
-        ...keysList.map<HandledKeyOptions>((k) => {
-          const [keys, keyList] = handleKeys(k, this._keyAliasMap);
-          return { ...item, rawKeys: item.keys, keys, keyList };
-        }),
-      );
+
+      keysList.forEach((k) => {
+        const [keys, keyList] = handleKeys(k, this._keyAliasMap);
+        const index = this.findIndex(k, [keys, keyList], res);
+        // 后面不能覆盖前面的
+        if (index !== -1) {
+          console.warn('Keymap: `' + res[index]?.keys + '` duplicate');
+          return;
+        }
+        res.push({ ...item, rawKeys: item.keys, keys, keyList });
+      });
+
       return res;
     }, [] as HandledKeyOptions[]);
   }
@@ -182,9 +188,12 @@ export class Keymap {
   /**
    * 根据keys查找所在index
    */
-  private findIndex(keys: string): number {
-    const handledKeys = handleKeys(keys, this._keyAliasMap);
-    return this.registeredMaps.findIndex((map) => {
+  private findIndex(
+    keys: string,
+    handledKeys = handleKeys(keys, this._keyAliasMap),
+    registeredMaps = this.registeredMaps,
+  ): number {
+    return registeredMaps.findIndex((map) => {
       if (map.rawKeys === keys) return true;
       if (map.keys === handledKeys[0]) return true;
 
@@ -255,12 +264,24 @@ export class Keymap {
    * console.log(count) // 1;
    * ```
    *
-   * @returns 是否添加成功
+   * @returns 是否添加成功数量
    */
-  add(map: KeyOptions): boolean {
-    const exist = castArray(map.keys).every((keys) => this.has(keys));
-    !exist && this.registeredMaps.push(...this.handleMaps([map]));
-    return !exist;
+  add(map: KeyOptions): number {
+    const keys = castArray(map.keys).filter((keys) => !this.has(keys));
+    if (keys.length > 0)
+      this.registeredMaps.push(
+        ...this.handleMaps([
+          {
+            ...map,
+            keys: Array.isArray(map.keys)
+              ? keys.length === 1
+                ? (keys[0] as string)
+                : keys
+              : map.keys,
+          },
+        ]),
+      );
+    return keys.length;
   }
 
   /**
