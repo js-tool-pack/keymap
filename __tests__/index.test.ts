@@ -191,4 +191,67 @@ describe('keymap', function () {
       },
     ]);
   });
+  test('defaultKeyAliasMap', () => {
+    const fn = jest.fn();
+    const km = new Keymap({ keyAliasMap: {} }, [
+      { desc: 'test', keys: ['Control + a', 'CMD + a'], handler: fn },
+    ]);
+
+    expect(km.maps).toEqual([
+      {
+        desc: 'test',
+        keyList: ['control', 'a'],
+        keys: 'control + a',
+        rawKeys: ['Control + a', 'CMD + a'],
+      },
+      {
+        desc: 'test',
+        keyList: ['cmd', 'a'],
+        keys: 'cmd + a',
+        rawKeys: ['Control + a', 'CMD + a'],
+      },
+    ]);
+
+    expect(km.has('ctrl+a')).toBeFalsy();
+    expect(km.keyAliasMap).toEqual({});
+
+    // 让control成为alt的别名
+    expect(km.has('alt+a')).toBeFalsy();
+    km.keyAliasMap = { control: 'alt' };
+    expect(km.has('alt+a')).toBeTruthy();
+
+    expect(km.maps).toEqual([
+      {
+        desc: 'test',
+        keyList: ['alt', 'a'],
+        keys: 'control + a',
+        rawKeys: ['Control + a', 'CMD + a'],
+      },
+      {
+        desc: 'test',
+        keyList: ['cmd', 'a'],
+        keys: 'cmd + a',
+        rawKeys: ['Control + a', 'CMD + a'],
+      },
+    ]);
+
+    // 恢复默认别名
+    km.keyAliasMap = defaultKeyAliasMap;
+    expect(km.has('alt+a')).toBeFalsy();
+
+    expect(km.maps).toEqual([
+      {
+        desc: 'test',
+        keyList: ['control', 'a'],
+        keys: 'control + a',
+        rawKeys: ['Control + a', 'CMD + a'],
+      },
+      {
+        desc: 'test',
+        keyList: ['meta', 'a'],
+        keys: 'cmd + a',
+        rawKeys: ['Control + a', 'CMD + a'],
+      },
+    ]);
+  });
 });
