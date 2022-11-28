@@ -24,7 +24,7 @@ const triggerKeyup = useEvent(window, 'keyup').setKey;
 describe('strategy', function () {
   function common(type: StrategyType) {
     const fn = jest.fn();
-    const km = new Keymap({ strategy: type }, [{ keys: 'ctrl+r', handler: fn }]);
+    const km = new Keymap({ strategy: type }, [{ keys: ['ctrl+r', 'ctrl+t'], handler: fn }]);
 
     triggerKeydown('control');
     triggerKeydown('r');
@@ -43,6 +43,10 @@ describe('strategy', function () {
     expect(fn.mock.calls.length).toBe(2);
 
     triggerKeyup('control');
+
+    triggerKeydown('control');
+    triggerKeydown('t');
+    expect(fn.mock.calls.length).toBe(3);
 
     km.destroy();
     expect(() => km.add({ keys: 'a', handler: fn })).toThrow();

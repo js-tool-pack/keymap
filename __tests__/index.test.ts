@@ -4,19 +4,20 @@ import { isMac } from '../src/utils';
 describe('keymap', function () {
   test('base', () => {
     const fn = jest.fn();
-    const km = new Keymap([{ keys: 'Control+a', handler: fn }]);
+    const km = new Keymap([{ keys: ['Control+a', 'Control+b'], handler: fn }]);
     expect(fn.mock.calls.length).toBe(0);
 
     km.trigger('Control+a');
     expect(fn.mock.calls.length).toBe(1);
 
-    km.trigger('control+a');
+    km.trigger('control+b');
     km.trigger('Ctrl+a');
+    km.trigger('Ctrl+c');
     expect(fn.mock.calls.length).toBe(3);
   });
   test('base recordAll', () => {
     const fn = jest.fn();
-    const km = new Keymap([{ keys: 'Control+a', handler: fn }]);
+    const km = new Keymap({ strategy: 'recordAll' }, [{ keys: 'Control+a', handler: fn }]);
     expect(fn.mock.calls.length).toBe(0);
 
     km.trigger('Control+a');
