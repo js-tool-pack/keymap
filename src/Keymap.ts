@@ -14,6 +14,12 @@ export interface KeymapConfig {
    * 快捷键策略
    */
   strategy?: StrategyType;
+  /**
+   * 配置别名
+   *
+   * @see defaultKeyAliasMap
+   */
+  keyAliasMap?: Record<string, string>;
 }
 /**
  * 主类
@@ -22,37 +28,9 @@ export class Keymap {
   /**
    * 按键别名映射map
    *
-   * @default
-   * ```ts
-   * {
-   *    meta: 'meta',
-   *    command: 'meta',
-   *    cmd: 'meta',
-   *    super: 'meta',
-   *    '⌘': 'meta',
-   *    control: 'control',
-   *    ctrl: 'control',
-   *    '⌃': 'control',
-   *    '⇧': 'shift',
-   *    option: 'alt',
-   *    '⌥': 'alt',
-   *    esc: 'escape',
-   *    return: 'enter',
-   *    '↩︎': 'enter',
-   *    '⏎': 'enter',
-   *    plus: '+',
-   *    space: ' ',
-   *    '␣': ' ',
-   *    '⌫': 'backspace',
-   *    '⇥': 'tab',
-   *    '←': 'arrowleft',
-   *    '→': 'arrowright',
-   *    '↑': 'arrowup',
-   *    '↓': 'arrowdown'
-   * }
-   * ```
+   * @see defaultKeyAliasMap
    */
-  private _keyAliasMap = defaultKeyAliasMap;
+  private _keyAliasMap: Record<string, string>;
 
   /**
    * 已注册的所有组合键
@@ -89,12 +67,17 @@ export class Keymap {
    */
   constructor(config: KeymapConfig, maps?: KeyOptions[]);
   constructor(...args: any[]) {
-    const config: Required<KeymapConfig> = { el: window, strategy: 'recordCompose' };
+    const config: Required<KeymapConfig> = {
+      el: window,
+      strategy: 'recordCompose',
+      keyAliasMap: defaultKeyAliasMap,
+    };
     let maps: KeyOptions[];
     if (args.length === 2) {
       Object.assign(config, args[0]);
       maps = args[1];
     } else maps = args[0];
+    this._keyAliasMap = config.keyAliasMap;
     // 处理keys
     this.registeredMaps = this.handleMaps(maps);
     this.canceler = keymapStrategy[config.strategy](config.el, this.registeredMaps);
