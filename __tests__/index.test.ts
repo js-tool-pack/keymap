@@ -115,7 +115,7 @@ describe('keymap', function () {
     isMac.userAgent = 'mac';
     const fn = jest.fn();
     const km = new Keymap([
-      { desc: 'test', keys: 'Control+a', handler: fn },
+      { desc: 'test', keys: ['Control+a', 'Ctrl+b'], handler: fn },
       { desc: 'test2', keys: 'ControlOrMeta+a', handler: fn },
     ]);
     expect(km.maps).toEqual([
@@ -123,7 +123,13 @@ describe('keymap', function () {
         desc: 'test',
         keyList: ['control', 'a'],
         keys: 'control+a',
-        rawKeys: 'Control+a',
+        rawKeys: ['Control+a', 'Ctrl+b'],
+      },
+      {
+        desc: 'test',
+        keyList: ['control', 'b'],
+        keys: 'ctrl+b',
+        rawKeys: ['Control+a', 'Ctrl+b'],
       },
       {
         desc: 'test2',
