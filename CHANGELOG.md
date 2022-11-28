@@ -1,3 +1,9 @@
+## [0.0.5](https://github.com/js-tool-pack/keymap/compare/v0.0.3...v0.0.5) (2022-11-28)
+
+### Features
+
+- 1.keys 支持用空格隔开；2.提供默认别名，支持自定义别名 ([7e6450c](https://github.com/js-tool-pack/keymap/commit/7e6450c2e2bb516683ebd84b60e0494afb998360))
+
 ## [0.0.3](https://github.com/js-tool-pack/keymap/compare/v0.0.2...v0.0.3) (2022-11-28)
 
 ## [0.0.2](https://github.com/js-tool-pack/keymap/compare/v0.0.1...v0.0.2) (2022-11-28)
