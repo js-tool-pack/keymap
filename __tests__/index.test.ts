@@ -15,6 +15,35 @@ describe('keymap', function () {
     km.trigger('Ctrl+c');
     expect(fn.mock.calls.length).toBe(3);
   });
+  test('快捷键冲突', () => {
+    const originWarn = console.warn;
+    const mockWarn = (console.warn = jest.fn());
+
+    const fn = jest.fn();
+    const km = new Keymap([
+      { keys: ['Control + a', 'Ctrl+a'], handler: fn },
+      { keys: ['⌃+a', 'control + a'], handler: fn },
+    ]);
+
+    expect(km.maps.length).toBe(1);
+
+    expect(fn.mock.calls.length).toBe(0);
+
+    km.trigger('Control+a');
+    expect(fn.mock.calls.length).toBe(1);
+
+    km.trigger('control+b');
+    km.trigger('Ctrl+a');
+    km.trigger('Ctrl+c');
+    expect(fn.mock.calls.length).toBe(2);
+
+    expect(mockWarn.mock.calls.length).toBe(3);
+    expect(mockWarn.mock.calls[0][0]).toBe('Keymap: `control + a` duplicate');
+    expect(mockWarn.mock.calls[1][0]).toBe('Keymap: `control + a` duplicate');
+    expect(mockWarn.mock.calls[2][0]).toBe('Keymap: `control + a` duplicate');
+
+    console.warn = originWarn;
+  });
   test('base recordAll', () => {
     const fn = jest.fn();
     const km = new Keymap({ strategy: 'recordAll' }, [{ keys: 'Control+a', handler: fn }]);
@@ -57,7 +86,7 @@ describe('keymap', function () {
     const fn = jest.fn();
     const km = new Keymap([{ keys: 'Control+a', handler: fn }]);
 
-    km.add({ keys: 'ctrl+b', handler: fn });
+    expect(km.add({ keys: 'ctrl+b', handler: fn })).toBe(1);
     expect(km.has('ctrl+b')).toBeTruthy();
 
     expect(fn.mock.calls.length).toBe(0);
@@ -72,7 +101,7 @@ describe('keymap', function () {
         _this = this;
       },
     };
-    expect(km.add(options)).toBeTruthy();
+    expect(km.add(options)).toBe(1);
     expect(_this).toBeUndefined();
     km.trigger('Control+s');
     expect(_this).toEqual({
@@ -82,7 +111,10 @@ describe('keymap', function () {
       rawKeys: 'ctrl+s',
     });
 
-    expect(km.add(options)).toBeFalsy();
+    expect(km.add(options)).toBe(0);
+    expect(km.add({ ...options, keys: ['ctrl+s', 'shift+s'] })).toBe(1);
+
+    expect(km.add({ ...options, keys: ['alt+s', 'alt+shift+s'] })).toBe(2);
   });
   test('remove', () => {
     const fn = jest.fn();
