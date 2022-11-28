@@ -1,7 +1,6 @@
 import type { HandledKeyOptions, KeyOptions, StrategyType } from './types';
 import { keymapStrategy } from './strategy';
-import { handleKeys } from './utils';
-import { castArray } from '@mxssfd/core';
+import { handleKeys, castArray } from './utils';
 
 /**
  * Keymap配置项

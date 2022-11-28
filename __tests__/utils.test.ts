@@ -1,4 +1,4 @@
-import { isMac, handleKeys } from '../src/utils';
+import { isMac, handleKeys, castArray } from '../src/utils';
 
 describe('utils', function () {
   let origin: string;
@@ -31,5 +31,11 @@ describe('utils', function () {
     isMac.userAgent = '';
     expect(handleKeys('ControlOrMeta+a')).toEqual(['controlormeta+a', ['control', 'a']]);
     expect(handleKeys('ControlOrMeta++')).toEqual(['controlormeta++', ['control', '+']]);
+  });
+  test('castArray', () => {
+    const fn = castArray;
+    expect(fn(0)).toEqual([0]);
+    expect(fn('')).toEqual(['']);
+    expect(fn([1, 2, 3])).toEqual([1, 2, 3]);
   });
 });

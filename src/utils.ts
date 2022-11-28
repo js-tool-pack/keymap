@@ -33,3 +33,14 @@ export function handleKeys(keys: string): [string, string[]] {
   // const keyList = keys.split(/(?<!\+)\+/).map((key) => replace(key));
   return [keys, keyList];
 }
+
+/**
+ * @example
+ * castArray([1]); // [1]
+ * @example
+ * castArray(1); // [1]
+ * @param value
+ */
+export function castArray<T>(value: T): T extends Array<any> ? T : Array<T> {
+  return (Array.isArray(value) ? value : [value]) as any;
+}
