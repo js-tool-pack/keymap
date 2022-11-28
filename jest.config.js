@@ -10,7 +10,7 @@ module.exports = {
   },
   collectCoverageFrom: [
     'src/**',
-    //    '!src/strategy.ts',
+    '!src/index.ts',
     'packages/**/src/**',
     '!**/packages/**/dist/**',
     '!**/packages/**/src/index.ts',
