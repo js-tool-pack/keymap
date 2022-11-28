@@ -150,7 +150,7 @@ export class Keymap {
    * ```
    */
   set keyAliasMap(alias: Record<string, string>) {
-    this._keyAliasMap = alias;
+    this._keyAliasMap = { ...alias };
     const originMaps: KeyOptions[] = [];
     this.registeredMaps.forEach((m) => {
       if (originMaps.find((o) => o.keys === m.rawKeys)) return;
