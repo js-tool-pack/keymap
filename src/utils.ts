@@ -33,6 +33,39 @@ const AliasMapList: Record<string, string[]> = {
   arrowdown: ['↓'],
 };
 
+/**
+ * 默认按键别名映射map
+ *
+ * @default
+ * ```ts
+ * {
+ *    meta: 'meta',
+ *    command: 'meta',
+ *    cmd: 'meta',
+ *    super: 'meta',
+ *    '⌘': 'meta',
+ *    control: 'control',
+ *    ctrl: 'control',
+ *    '⌃': 'control',
+ *    '⇧': 'shift',
+ *    option: 'alt',
+ *    '⌥': 'alt',
+ *    esc: 'escape',
+ *    return: 'enter',
+ *    '↩︎': 'enter',
+ *    '⏎': 'enter',
+ *    plus: '+',
+ *    space: ' ',
+ *    '␣': ' ',
+ *    '⌫': 'backspace',
+ *    '⇥': 'tab',
+ *    '←': 'arrowleft',
+ *    '→': 'arrowright',
+ *    '↑': 'arrowup',
+ *    '↓': 'arrowdown'
+ * }
+ * ```
+ */
 export const defaultKeyAliasMap: Record<string, string> = Object.keys(AliasMapList).reduce(
   (res, key) => {
     AliasMapList[key]?.forEach((alias) => (res[alias] = key));
