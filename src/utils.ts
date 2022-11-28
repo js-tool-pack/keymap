@@ -66,12 +66,11 @@ const AliasMapList: Record<string, string[]> = {
  * }
  * ```
  */
-export const defaultKeyAliasMap: Record<string, string> = Object.keys(AliasMapList).reduce(
-  (res, key) => {
+export const defaultKeyAliasMap = Object.freeze(
+  Object.keys(AliasMapList).reduce((res, key) => {
     AliasMapList[key]?.forEach((alias) => (res[alias] = key));
     return res;
-  },
-  {} as Record<string, string>,
+  }, {} as Record<string, string>),
 );
 
 /**
