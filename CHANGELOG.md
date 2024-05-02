@@ -1,3 +1,9 @@
+## [0.0.7](https://github.com/js-tool-pack/keymap/compare/v0.0.6...v0.0.7) (2024-05-02)
+
+### Bug Fixes
+
+- 在 ts 5.0 后不识别类型导入 ([2bc523a](https://github.com/js-tool-pack/keymap/commit/2bc523a71ba445c4f60ff8cbaca8b9d74380be38))
+
 ## [0.0.6](https://github.com/js-tool-pack/keymap/compare/v0.0.5...v0.0.6) (2022-11-28)
 
 ### Features
