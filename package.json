@@ -92,9 +92,13 @@
     ".": {
       "import": {
         "node": "./dist/keymap.cjs.js",
-        "default": "./dist/keymap.esm-bundler.js"
+        "default": "./dist/keymap.esm-bundler.js",
+        "types": "./dist/keymap.d.ts"
       },
-      "require": "./dist/keymap.cjs.js"
+      "require": {
+        "default": "./dist/keymap.cjs.js",
+        "types": "./dist/keymap.d.ts"
+      }
     }
   },
   "buildOptions": {
