@@ -169,10 +169,13 @@ function createPackageJson(pkgPath: string, config: Awaited<ReturnType<typeof ge
     "apie": "api-extractor run"
   },
   "dependencies": ${JSON.stringify(
-    config.deps.reduce((prev, cur) => {
-      prev[`@${rootPkg.name}/${cur}`] = rootPkg.version;
-      return prev;
-    }, {} as Record<string, string>),
+    config.deps.reduce(
+      (prev, cur) => {
+        prev[`@${rootPkg.name}/${cur}`] = rootPkg.version;
+        return prev;
+      },
+      {} as Record<string, string>,
+    ),
   )},
   "author": "dyh",
   "license": "MIT",

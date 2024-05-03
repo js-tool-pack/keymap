@@ -15,7 +15,7 @@
     //    "rootDir": "src",
     "forceConsistentCasingInFileNames": false,
     "importHelpers": true,
-    "suppressImplicitAnyIndexErrors": true,
+    //  "suppressImplicitAnyIndexErrors": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "strict": true,
@@ -40,7 +40,8 @@
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "allowUnusedLabels": false,
-    "allowUnreachableCode": false
+    "allowUnreachableCode": false,
+    "skipLibCheck": true
   },
   "include": ["__tests__/**/*.ts", "tests/*/*.ts", "src/**/*.d.ts", "src/**/*.ts"]
 }

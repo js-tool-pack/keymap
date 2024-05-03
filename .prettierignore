@@ -11,3 +11,5 @@
 coverage
 docs-html
 .github
+pnpm-lock.yaml
+typedoc.theme.css
